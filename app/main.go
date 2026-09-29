@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"bufio"
 	"fmt"
 	"os"
@@ -17,6 +18,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 			os.Exit(1)
 		}
+		command = strings.Trim(command)
 
 		if (command == "exit") os.Exit(1)
 
