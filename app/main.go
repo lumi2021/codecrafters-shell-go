@@ -24,6 +24,10 @@ func main() {
 			break
 		}
 
+		if strings.HasPrefix(command, "echo ") {
+			fmt.Println(command[:5]);
+		}
+
 		fmt.Println(command+ ": command not found")
 	}
 }
