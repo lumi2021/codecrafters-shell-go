@@ -20,7 +20,7 @@ func main() {
 		}
 		command = strings.TrimSpace(command)
 
-		if (command == "exit") { os.Exit(1) }
+		if (command == "exit") { break }
 
 		fmt.Println(command[:len(command)-1] + ": command not found")
 	}
