@@ -29,12 +29,8 @@ execloop:
 			break execloop
 
 		case "type":
-			fmt.Println(command[1])
-
 			switch command[1] {
-			case "echo":
-			case "exit":
-			case "type":
+			case "echo", "exit", "type":
 				fmt.Println(command[1] + " is a shell builtin")
 
 			default:
