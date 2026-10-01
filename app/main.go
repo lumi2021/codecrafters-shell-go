@@ -48,11 +48,13 @@ execloop:
 			}
 
 		case "pwd":
-			cwd, err := os.Getwd()
-			if err != nil {
-				panic(err)
+			fmt.Println(getCwd())
+
+		case "cd":
+			if len(command) < 2 {
+				panic("cd: missing argument")
 			}
-			fmt.Println(cwd)
+			cd(command[1])
 
 		default:
 			path, success := searchForExec(command[0], getEnvPath())
@@ -111,4 +113,15 @@ func execute(execPath string, args []string) {
 		fmt.Println("error:", err)
 		return
 	}
+}
+
+func getCwd() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	return cwd
+}
+func cd(to string) error {
+	return os.Chdir(to)
 }
