@@ -93,11 +93,13 @@ func searchForExec(exec string, paths []string) (string, bool) {
 func execute(execPath string, args []string) {
 	cmd := exec.Command(execPath, "-la")
 
-	output, err := cmd.Output()
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
 	if err != nil {
-		fmt.Println("erro:", err)
+		fmt.Println("error:", err)
 		return
 	}
-
-	fmt.Println(string(output))
 }
