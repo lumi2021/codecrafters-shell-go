@@ -29,17 +29,20 @@ execloop:
 			break execloop
 
 		case "type":
+			fmt.Println(command[1])
+
 			switch command[1] {
 			case "echo":
 			case "exit":
 			case "type":
 				fmt.Println(command[1] + " is a shell builtin")
+
+			default:
+				fmt.Println(command[1] + ": not found")
 			}
 
 		default:
-			fmt.Println(command[1] + ": not found")
+			fmt.Println(command[0] + ": command not found")
 		}
-
-		fmt.Println(command[0] + ": command not found")
 	}
 }
