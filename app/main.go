@@ -55,7 +55,7 @@ execloop:
 				panic("cd: missing argument")
 			}
 			err := cd(command[1])
-			if (err != nil) {
+			if err != nil {
 				fmt.Println("cd: " + command[1] + ": No such file or directory")
 			}
 
@@ -126,5 +126,14 @@ func getCwd() string {
 	return cwd
 }
 func cd(to string) error {
+	if to == "~" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+
+		to = home
+	}
+
 	return os.Chdir(to)
 }
