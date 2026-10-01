@@ -54,7 +54,10 @@ execloop:
 			if len(command) < 2 {
 				panic("cd: missing argument")
 			}
-			cd(command[1])
+			err := cd(command[1])
+			if (err != nil) {
+				fmt.Println("cd: " + command[1] + ": No such file or directory.")
+			}
 
 		default:
 			path, success := searchForExec(command[0], getEnvPath())
