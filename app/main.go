@@ -56,7 +56,7 @@ execloop:
 			}
 			err := cd(command[1])
 			if (err != nil) {
-				fmt.Println("cd: " + command[1] + ": No such file or directory.")
+				fmt.Println("cd: " + command[1] + ": No such file or directory")
 			}
 
 		default:
