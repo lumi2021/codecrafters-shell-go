@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -52,7 +53,7 @@ execloop:
 				continue
 			}
 
-			_ = path
+			execute(path, command[1:])
 		}
 	}
 }
@@ -87,4 +88,16 @@ func searchForExec(exec string, paths []string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func execute(execPath string, args []string) {
+	cmd := exec.Command(execPath, "-la")
+
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println("erro:", err)
+		return
+	}
+
+	fmt.Println(string(output))
 }
