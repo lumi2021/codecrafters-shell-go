@@ -26,7 +26,7 @@ execloop:
 
 		switch command[0] {
 		case "echo":
-			fmt.Println(strings.Join(command, " "))
+			fmt.Println(strings.Join(command[1:], " "))
 
 		case "exit":
 			break execloop
@@ -36,7 +36,8 @@ execloop:
 			case "echo",
 				"exit",
 				"type",
-				"pwd":
+				"pwd",
+				"cd":
 				fmt.Println(command[1] + " is a shell builtin")
 
 			default:
