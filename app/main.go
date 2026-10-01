@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -30,15 +31,54 @@ execloop:
 
 		case "type":
 			switch command[1] {
-			case "echo", "exit", "type":
+			case "echo",
+				"exit",
+				"type":
 				fmt.Println(command[1] + " is a shell builtin")
 
 			default:
-				fmt.Println(command[1] + ": not found")
+				path, success := searchForExec(command[1], getEnvPath())
+				if !success {
+					fmt.Println(command[1] + ": not found")
+					continue
+				}
+				fmt.Println(command[1] + " is " + path)
 			}
 
 		default:
-			fmt.Println(command[0] + ": command not found")
+			path, success := searchForExec(command[0], getEnvPath())
+			if !success {
+				fmt.Println(command[0] + ": command not found")
+				continue
+			}
+
+			_ = path
 		}
 	}
+}
+
+func getEnvPath() []string {
+	path := os.Getenv("PATH")
+	paths := strings.Split(path, string(os.PathListSeparator))
+	return paths
+}
+
+func searchForExec(exec string, paths []string) (string, bool) {
+	for _, dir := range paths {
+		path := filepath.Join(dir, exec)
+
+		info, err := os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			continue
+		}
+
+		if !info.IsDir() {
+			return path, true
+		}
+	}
+
+	return "", false
 }
