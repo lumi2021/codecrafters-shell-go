@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 var _ = fmt.Print
@@ -21,7 +22,7 @@ execloop:
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 			os.Exit(1)
 		}
-		command := strings.Fields(commandStr)
+		command := splitArgs(commandStr)
 
 		switch command[0] {
 		case "echo":
@@ -71,12 +72,37 @@ execloop:
 	}
 }
 
+func splitArgs(cmdline string) []string {
+	var args []string
+
+	var arg = ""
+	var parenthesis = '\x00'
+
+	for _, r := range cmdline {
+
+		if (parenthesis == '\x00' || parenthesis == r) && (r == '\'' || r == '"') {
+			if parenthesis == '\x00' {
+				parenthesis = r
+			} else {
+				parenthesis = '\x00'
+			}
+			continue
+		}
+
+		if parenthesis != '\x00' && unicode.IsSpace(r) && len(arg) != 0 {
+			args = append(args, arg)
+		}
+
+	}
+
+	return args
+}
+
 func getEnvPath() []string {
 	path := os.Getenv("PATH")
 	paths := strings.Split(path, string(os.PathListSeparator))
 	return paths
 }
-
 func searchForExec(exec string, paths []string) (string, bool) {
 	for _, dir := range paths {
 		path := filepath.Join(dir, exec)
@@ -102,7 +128,6 @@ func searchForExec(exec string, paths []string) (string, bool) {
 
 	return "", false
 }
-
 func execute(execPath string, args []string) {
 	cmd := exec.Command(execPath, args[1:]...)
 	cmd.Args[0] = args[0]
@@ -131,7 +156,6 @@ func cd(to string) error {
 		if err != nil {
 			return err
 		}
-
 		to = home
 	}
 
