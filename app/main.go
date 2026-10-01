@@ -26,7 +26,7 @@ execloop:
 
 		switch command[0] {
 		case "echo":
-			fmt.Println(strings.TrimSpace(commandStr)[5:])
+			fmt.Println(command[1])
 
 		case "exit":
 			break execloop
