@@ -34,7 +34,8 @@ execloop:
 			switch command[1] {
 			case "echo",
 				"exit",
-				"type":
+				"type",
+				"pwd":
 				fmt.Println(command[1] + " is a shell builtin")
 
 			default:
@@ -45,6 +46,13 @@ execloop:
 				}
 				fmt.Println(command[1] + " is " + path)
 			}
+
+		case "pwd":
+			cwd, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(cwd)
 
 		default:
 			path, success := searchForExec(command[0], getEnvPath())
