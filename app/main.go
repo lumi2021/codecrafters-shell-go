@@ -53,7 +53,7 @@ execloop:
 				continue
 			}
 
-			execute(path, command[1:])
+			execute(path, command)
 		}
 	}
 }
