@@ -75,9 +75,15 @@ func searchForExec(exec string, paths []string) (string, bool) {
 			continue
 		}
 
-		if !info.IsDir() {
-			return path, true
+		if info.IsDir() {
+			continue
 		}
+
+		if info.Mode().Perm()&0111 == 0 {
+			continue
+		}
+
+		return path, true
 	}
 
 	return "", false
