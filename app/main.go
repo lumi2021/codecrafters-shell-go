@@ -91,7 +91,7 @@ func searchForExec(exec string, paths []string) (string, bool) {
 }
 
 func execute(execPath string, args []string) {
-	cmd := exec.Command(execPath, "-la")
+	cmd := exec.Command(execPath, args...)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
