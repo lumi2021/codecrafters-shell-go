@@ -75,7 +75,7 @@ execloop:
 func splitArgs(cmdline string) []string {
 	var args []string
 
-	var arg = ""
+	var arg strings.Builder
 	var parenthesis = '\x00'
 
 	for _, r := range cmdline {
@@ -89,10 +89,17 @@ func splitArgs(cmdline string) []string {
 			continue
 		}
 
-		if parenthesis != '\x00' && unicode.IsSpace(r) && len(arg) != 0 {
-			args = append(args, arg)
+		if parenthesis == '\x00' && unicode.IsSpace(r) && arg.Len() != 0 {
+			args = append(args, arg.String())
+			arg.Reset()
+			continue
 		}
 
+		arg.WriteRune(r)
+	}
+
+	if arg.Len() > 0 {
+		args = append(args, arg.String())
 	}
 
 	return args
