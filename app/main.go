@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 var _ = fmt.Print
@@ -79,7 +80,40 @@ func splitArgs(cmdline string) []string {
 	var arg strings.Builder
 	var parenthesis = '\x00'
 
-	for _, r := range cmdline {
+	runes := []rune(cmdline)
+	for i := 0; i < len(runes); {
+
+		r, size := utf8.DecodeRuneInString(cmdline[i:])
+		i += size
+
+		if r == '\\' {
+			if i >= len(cmdline) {
+				arg.WriteRune('\\')
+				break
+			}
+
+			escaped, escapedSize := utf8.DecodeRuneInString(cmdline[i:])
+			i += escapedSize
+
+			switch escaped {
+			case 'n':
+				arg.WriteRune('\n')
+			case 'r':
+				arg.WriteRune('\r')
+			case 't':
+				arg.WriteRune('\t')
+			case '\\':
+				arg.WriteRune('\\')
+			case '\'':
+				arg.WriteRune('\'')
+			case '"':
+				arg.WriteRune('"')
+			default:
+				arg.WriteRune(escaped)
+			}
+
+			continue
+		}
 
 		if (parenthesis == '\x00' || parenthesis == r) && (r == '\'' || r == '"') {
 			if parenthesis == '\x00' {
