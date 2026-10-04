@@ -115,7 +115,7 @@ func splitArgs(cmdline string) []string {
 			continue
 		}
 
-		if parenthesis != '\x00' && r == '\\' {
+		if parenthesis == '"' && r == '\\' {
 			if i >= len(cmdline) {
 				arg.WriteRune('\\')
 				break
@@ -127,12 +127,10 @@ func splitArgs(cmdline string) []string {
 			switch escaped {
 			case '\\':
 				arg.WriteRune('\\')
-			case '\'':
-				arg.WriteRune('\'')
 			case '"':
-				arg.WriteRune('\\')
 				arg.WriteRune('"')
 			default:
+				arg.WriteRune('\\')
 				arg.WriteRune(escaped)
 			}
 
