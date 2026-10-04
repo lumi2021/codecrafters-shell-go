@@ -115,6 +115,25 @@ func splitArgs(cmdline string) []string {
 			continue
 		}
 
+		if parenthesis != '\x00' && r == '\\' {
+			if i >= len(cmdline) {
+				arg.WriteRune('\\')
+				break
+			}
+
+			escaped, escapedSize := utf8.DecodeRuneInString(cmdline[i:])
+			i += escapedSize
+
+			switch escaped {
+			case '\\':
+				arg.WriteRune('\\')
+			default:
+				arg.WriteRune(escaped)
+			}
+
+			continue
+		}
+
 		if (parenthesis == '\x00' || parenthesis == r) && (r == '\'' || r == '"') {
 			if parenthesis == '\x00' {
 				parenthesis = r
