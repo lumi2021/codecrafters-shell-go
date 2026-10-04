@@ -117,7 +117,7 @@ func Execute(command *parser.Command) error {
 }
 
 func builtinExit(args []string, io ShellIO) error {
-	os.Exit(1)
+	os.Exit(0)
 	return nil
 }
 
