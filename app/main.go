@@ -125,7 +125,7 @@ func splitArgs(cmdline string) []string {
 		}
 
 		if parenthesis == '\x00' && unicode.IsSpace(r) {
-			if (arg.Len() != 0) {
+			if arg.Len() != 0 {
 				args = append(args, arg.String())
 				arg.Reset()
 			}
