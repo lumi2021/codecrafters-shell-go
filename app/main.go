@@ -86,7 +86,7 @@ func splitArgs(cmdline string) []string {
 		r, size := utf8.DecodeRuneInString(cmdline[i:])
 		i += size
 
-		if r == '\\' {
+		if parenthesis == '\x00' && r == '\\' {
 			if i >= len(cmdline) {
 				arg.WriteRune('\\')
 				break
