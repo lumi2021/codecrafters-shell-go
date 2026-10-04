@@ -195,11 +195,23 @@ func searchForExec(exec string, paths []string) (string, bool) {
 	return "", false
 }
 func execute(execPath string, args []string) {
+	var stdout *os.File = os.Stdout
+
+	if len(args) > 2 && (args[len(args)-2] == ">" || args[len(args)-2] == "1>") {
+		outputFile, err := os.Create(args[len(args)-1])
+		if err != nil {
+			panic(err)
+		}
+		defer outputFile.Close()
+		stdout = outputFile
+		args = args[:len(args)-2]
+	}
+
 	cmd := exec.Command(execPath, args[1:]...)
 	cmd.Args[0] = args[0]
 
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
+	cmd.Stdout = stdout
 	cmd.Stderr = os.Stderr
 
 	err := cmd.Run()
