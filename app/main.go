@@ -96,10 +96,10 @@ func splitArgs(cmdline string) []string {
 			i += escapedSize
 
 			switch escaped {
-			case 'n':
-				arg.WriteRune('\n')
-			case 'r':
-				arg.WriteRune('\r')
+			//case 'n':
+			//	arg.WriteRune('\n')
+			//case 'r':
+			//	arg.WriteRune('\r')
 			case 't':
 				arg.WriteRune('\t')
 			case '\\':
