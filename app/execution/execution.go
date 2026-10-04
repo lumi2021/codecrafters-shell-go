@@ -26,6 +26,7 @@ func init() {
 		"pwd":  builtinPwd,
 		"cd":   builtinCd,
 		"type": builtinType,
+		"exit": builtinExit,
 	}
 }
 
@@ -112,7 +113,7 @@ func Execute(command *parser.Command) error {
 		return nil
 	}
 
-	return callExecutable(path, args, shellIO);
+	return callExecutable(path, args, shellIO)
 }
 
 func builtinExit(args []string, io ShellIO) error {
@@ -176,7 +177,6 @@ func callExecutable(path string, args []string, io ShellIO) error {
 
 	return cmd.Run()
 }
-
 
 func getCwd() string {
 	cwd, err := os.Getwd()
