@@ -127,6 +127,10 @@ func splitArgs(cmdline string) []string {
 			switch escaped {
 			case '\\':
 				arg.WriteRune('\\')
+			case '\'':
+				arg.WriteRune('\'')
+			case '"':
+				arg.WriteRune('"')
 			default:
 				arg.WriteRune(escaped)
 			}
