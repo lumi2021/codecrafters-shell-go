@@ -12,6 +12,7 @@ const (
 	TokenWord TokenType = iota
 	TokenRedirectOut
 	TokenRedirectAppend
+	TokenRedirectErrAppend
 	TokenRedirectIn
 	TokenRedirectErr
 )
@@ -117,25 +118,49 @@ func lex(input string) ([]Token, error) {
 			runes[i+1] == '>' &&
 			arg.Len() == 0 {
 
-			var tokenType TokenType
+			fd := int(r - '0')
 
-			switch r {
-			case '0':
+			if fd > 2 {
+				return nil, fmt.Errorf(
+					"unsupported file descriptor: %d",
+					fd,
+				)
+			}
+
+			tokenType := TokenRedirectOut
+			length := 2
+
+			switch fd {
+			case 0:
 				tokenType = TokenRedirectIn
-			case '1':
+			case 1:
 				tokenType = TokenRedirectOut
-			case '2':
+			case 2:
 				tokenType = TokenRedirectErr
-			default:
-				return nil, fmt.Errorf("unsupported file descriptor: %c", r)
+			}
+
+			if i+2 < len(runes) && runes[i+2] == '>' {
+				if fd == 0 {
+					return nil, fmt.Errorf(
+						"append redirection is invalid for stdin",
+					)
+				}
+
+				if fd == 1 {
+					tokenType = TokenRedirectAppend
+				} else {
+					tokenType = TokenRedirectErrAppend
+				}
+
+				length = 3
 			}
 
 			tokens = append(tokens, Token{
 				Type:  tokenType,
-				Value: string([]rune{r, '>'}),
+				Value: string(runes[i : i+length]),
 			})
 
-			i += 2
+			i += length
 			continue
 		}
 
@@ -328,4 +353,3 @@ func getRedirectPath(tokens []Token, index int) (string, int, error) {
 
 	return next.Value, index + 1, nil
 }
-
