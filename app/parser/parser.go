@@ -140,16 +140,16 @@ func lex(input string) ([]Token, error) {
 			}
 
 			if i+2 < len(runes) && runes[i+2] == '>' {
-				if fd == 0 {
+
+				switch fd {
+				case 1:
+					tokenType = TokenRedirectAppend
+				case 2:
+					tokenType = TokenRedirectErrAppend
+				default:
 					return nil, fmt.Errorf(
 						"append redirection is invalid for stdin",
 					)
-				}
-
-				if fd == 1 {
-					tokenType = TokenRedirectAppend
-				} else {
-					tokenType = TokenRedirectErrAppend
 				}
 
 				length = 3
