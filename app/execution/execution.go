@@ -45,13 +45,21 @@ func Execute(command *parser.Command) error {
 			err  error
 		)
 
-		if redirect.FD == 0 {
+		switch redirect.FD {
+		case 0:
 			file, err = os.Open(redirect.Path)
-		} else {
+
+		case 1, 2:
 			file, err = os.OpenFile(
 				redirect.Path,
 				redirect.Mode,
 				0666,
+			)
+
+		default:
+			return fmt.Errorf(
+				"unsupported file descriptor: %d",
+				redirect.FD,
 			)
 		}
 
@@ -59,7 +67,6 @@ func Execute(command *parser.Command) error {
 			for _, f := range files {
 				_ = f.Close()
 			}
-
 			return err
 		}
 
@@ -72,17 +79,6 @@ func Execute(command *parser.Command) error {
 			shellIO.Stdout = file
 		case 2:
 			shellIO.Stderr = file
-		default:
-			_ = file.Close()
-
-			for _, f := range files {
-				_ = f.Close()
-			}
-
-			return fmt.Errorf(
-				"unsupported file descriptor: %d",
-				redirect.FD,
-			)
 		}
 	}
 

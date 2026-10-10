@@ -66,7 +66,7 @@ func lex(input string) ([]Token, error) {
 
 	for i := 0; i < len(runes); {
 		r := runes[i]
-		
+
 		if quote == '\'' {
 			if r == '\'' {
 				quote = 0
@@ -127,10 +127,7 @@ func lex(input string) ([]Token, error) {
 			case '2':
 				tokenType = TokenRedirectErr
 			default:
-				return nil, fmt.Errorf(
-					"unsupported file descriptor: %c",
-					r,
-				)
+				return nil, fmt.Errorf("unsupported file descriptor: %c", r)
 			}
 
 			tokens = append(tokens, Token{
