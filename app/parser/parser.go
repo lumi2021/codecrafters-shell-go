@@ -11,7 +11,7 @@ type TokenType int
 const (
 	TokenWord TokenType = iota
 	TokenRedirectOut
-	TokenRedirectAppend
+	TokenRedirectOutAppend
 	TokenRedirectErrAppend
 	TokenRedirectIn
 	TokenRedirectErr
@@ -145,7 +145,7 @@ func lex(input string) ([]Token, error) {
 				}
 
 				if fd == 1 {
-					tokenType = TokenRedirectAppend
+					tokenType = TokenRedirectOutAppend
 				} else {
 					tokenType = TokenRedirectErrAppend
 				}
@@ -188,7 +188,7 @@ func lex(input string) ([]Token, error) {
 
 			if i+1 < len(runes) && runes[i+1] == '>' {
 				tokens = append(tokens, Token{
-					Type:  TokenRedirectAppend,
+					Type:  TokenRedirectOutAppend,
 					Value: ">>",
 				})
 
@@ -268,7 +268,7 @@ func parser(tokens []Token) (*Command, error) {
 
 			i = next
 
-		case TokenRedirectAppend:
+		case TokenRedirectOutAppend:
 			path, next, err := getRedirectPath(tokens, i)
 			if err != nil {
 				return nil, err
@@ -318,6 +318,25 @@ func parser(tokens []Token) (*Command, error) {
 					Mode: os.O_CREATE |
 						os.O_WRONLY |
 						os.O_TRUNC,
+				},
+			)
+
+			i = next
+
+		case TokenRedirectErrAppend:
+			path, next, err := getRedirectPath(tokens, i)
+			if err != nil {
+				return nil, err
+			}
+
+			command.Redirects = append(
+				command.Redirects,
+				Redirect{
+					FD:   2,
+					Path: path,
+					Mode: os.O_CREATE |
+						os.O_WRONLY |
+						os.O_APPEND,
 				},
 			)
 
